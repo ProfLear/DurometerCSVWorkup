@@ -2,19 +2,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from scipy import stats
+import statsmodels.api as sm
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 # Set the path to your folder containing the CSV files
-dataFolder = "RawData"
+data_folder_path = "/path/to/your/csv_folder"
 
 # Define the sample order and load files
-fileOrder = ["48h-RT", "Laser_48h-RT", "Laser_RT_Oven"]
-filePaths = {sample: os.path.join(dataFolder, f"{sample}.csv") for sample in fileOrder}
+sample_order = ["48h-RT", "Laser_48h-RT", "Laser_RT_Oven"]
+file_paths = {sample: os.path.join(data_folder_path, f"{sample}.csv") for sample in sample_order}
 
-# Prepare data storage for plotting
+# Prepare data storage for plotting and statistical analysis
 data_summary = {}
+all_data = []  # Store data in long format for ANOVA and Tukey HSD
 
 # Process each file
-for sample_name, file_path in filePaths.items():
+for sample_name, file_path in file_paths.items():
     # Load the CSV, skipping the first row (sample type)
     df = pd.read_csv(file_path, skiprows=1)
     
@@ -26,17 +30,38 @@ for sample_name, file_path in filePaths.items():
     mean_values = measurements.mean()
     std_values = measurements.std()
     
-    # Store processed data
+    # Store processed data for plotting
     data_summary[sample_name] = {
         "positions": positions,
         "means": mean_values,
         "stds": std_values
     }
+    
+    # Append data for statistical analysis
+    for pos, column_data in zip(positions, measurements.T.values):
+        all_data.extend([(sample_name, pos, value) for value in column_data])
+
+# Convert all_data to a DataFrame for ANOVA and Tukey HSD
+data_df = pd.DataFrame(all_data, columns=["Sample", "Position", "Hardness"])
+
+# Perform ANOVA
+anova_result = stats.f_oneway(
+    *[data_df[data_df['Sample'] == sample]['Hardness'] for sample in sample_order]
+)
+
+print("ANOVA result:", anova_result)
+
+# Perform Tukey HSD if ANOVA is significant
+if anova_result.pvalue < 0.05:
+    tukey_result = pairwise_tukeyhsd(endog=data_df['Hardness'], groups=data_df['Sample'], alpha=0.05)
+    print("\nTukey HSD Test Result:\n", tukey_result.summary())
+else:
+    print("\nNo significant differences found among samples according to ANOVA; Tukey HSD not performed.")
 
 # Calculate bar width and offset dynamically based on the number of samples
 num_samples = len(data_summary)
 total_width = 0.6  # Total width allocated for each cluster on the x-axis (adjustable)
-bar_width = total_width / num_samples * 0.7 # Bar width so bars within cluster touch
+bar_width = total_width / num_samples  # Bar width so bars within cluster touch
 cluster_offset = bar_width * (num_samples + 0.5) / 2  # Offset to center clusters, with separation outside clusters
 
 # Plotting with calculated bar width and cluster offset
