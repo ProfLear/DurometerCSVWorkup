@@ -7,10 +7,10 @@ import statsmodels.api as sm
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 # Set the path to your folder containing the CSV files
-data_folder_path = "/path/to/your/csv_folder"
+data_folder_path = "RawData"
 
 # Define the sample order and load files
-sample_order = ["48h-RT", "Laser_48h-RT", "Laser_RT_Oven"]
+sample_order = ["48h-RT", "48h-RT_Laser", "48h-RT_Laser_Oven"]
 file_paths = {sample: os.path.join(data_folder_path, f"{sample}.csv") for sample in sample_order}
 
 # Prepare data storage for plotting and statistical analysis
@@ -61,7 +61,7 @@ else:
 # Calculate bar width and offset dynamically based on the number of samples
 num_samples = len(data_summary)
 total_width = 0.6  # Total width allocated for each cluster on the x-axis (adjustable)
-bar_width = total_width / num_samples  # Bar width so bars within cluster touch
+bar_width = total_width / num_samples *.7  # Bar width so bars within cluster touch
 cluster_offset = bar_width * (num_samples + 0.5) / 2  # Offset to center clusters, with separation outside clusters
 
 # Plotting with calculated bar width and cluster offset
