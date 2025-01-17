@@ -1,5 +1,5 @@
 # PDMS:CB heating condition hardness testing
-This repository contains the code for a PDMS:CB heating condition hardness testing experiment.  Given heating conditions of (1) lasing, (2) oven, and (3) room temperature, each permutation was prepared in triplicate and is shown below.  The various plots are simply to declutter the data, but the final plot shows all data on the same axes.
+This repository contains the code for a PDMS:CB heating condition hardness testing experiment.  Given heating conditions of (1) lasing, (2) oven, and (3) room temperature, each permutation was prepared in triplicate and measurements were taken at positions across each sample surface (also in triplicate).  The results are shown below.  The various plots are simply to declutter the data, but the final plot shows all data on the same axes.
 
 ## 1 step
 ![alt text](Exports/1-steps.png)
@@ -21,3 +21,7 @@ This repository contains the code for a PDMS:CB heating condition hardness testi
 
 ## TOTAL
 ![alt text](Exports/TOTAL.png)
+
+## TODO
+- [ ] choose the most representative set for the main paper
+- [ ] improve color scheme
