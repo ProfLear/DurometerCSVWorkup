@@ -48,13 +48,15 @@ def average_measurements(condition):
     return  means, stds
 
 def get_plot_formatting(condition):
+    alpha = 0.2
+    symbol = "circle"
+    color = "black"
+    fill = "black"
+    dash = "solid"
+    error = f"rgba(0, 0, 0, {alpha})"
+    
     for i, letter in enumerate(condition):
-        alpha = 0.2
-        symbol = "circle"
-        color = "black"
-        fill = "black"
-        dash = "solid"
-        error = f"rgba(0, 0, 0, {alpha})"
+        
 
         if letter == "L":
             if i == 0:
