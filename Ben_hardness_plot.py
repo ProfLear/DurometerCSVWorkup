@@ -50,28 +50,27 @@ def average_measurements(condition):
 def get_plot_formatting(condition):
     alpha = 0.2
     symbol = "circle"
-    color = "black"
-    fill = "black"
+    color = f"rgba(29, 87, 0, 1)"
+    fill = f"rgba(29, 87, 0, 1)"
     dash = "solid"
-    error = f"rgba(0, 0, 0, {alpha})"
+    error = f"rgba(29, 87, 0, {alpha})"
     
     for i, letter in enumerate(condition):
         
-
         if letter == "L":
             if i == 0:
-                color = "red"
-                fill = "red"
-                error = f"rgba(255, 0, 0, {alpha})"
+                color = f"rgba(211, 96, 39, 1)"
+                fill = f"rgba(211, 96, 39, 1)"
+                error = f"rgba(211, 96, 39, {alpha})"
             if i == 1:
-                color = "magenta"
-                fill = "magenta"
-                error = f"rgba(255, 0, 255, {alpha})"
+                color = f"rgba(162, 55, 104, 1)"
+                fill = f"rgba(162, 55, 104, 1)"
+                error = f"rgba(162, 55, 104, {alpha})"
 
             if i == 2:
-                color = "blue"
-                fill = "blue"
-                error = f"rgba(0, 0, 255, {alpha})"
+                color = f"rgba(7, 115, 177, 1)"
+                fill = f"rgba(7, 115, 177, 1)"
+                error = f"rgba(7, 115, 177, {alpha})"
 
         
         if letter == "O":
@@ -97,15 +96,19 @@ def get_plot_formatting(condition):
        
 #%% Generate plots
 x = [0, 0.5, 1, 1.5, 2]
+tick_labels = ["center", "floor", "wall", "rim", "bulk"]
 shorePlot = make_subplots(cols = 2, rows = 1)
-shorePlot.update_xaxes(title = "distance from center of illumination", range = [-0.25, 2.1])
+shorePlot.update_xaxes(title = "measurement position", 
+                       tickvals=x, ticktext=tick_labels, 
+                       range = [-0.27, 2.1])
 shorePlot.update_yaxes(title = "Shore hardness", range = [18, 57])
 # construct the left plot 
 col = 1
 
 # draw all the grey lines...
-for condition in ["L","LO","LR","O","OL","OR","R","RL","RO","LRO","LOR","RLO","ROL","OLR","ORL"]:
+for condition in ["LRO","LOR","RLO","ROL","OLR","ORL"]:
     y, std = average_measurements(results[f"{condition}"])
+    #print(f"{condition}: {y}")
 
     # grey lines
     shorePlot.add_scatter(
@@ -116,7 +119,9 @@ for condition in ["L","LO","LR","O","OL","OR","R","RL","RO","LRO","LOR","RLO","R
         marker = dict(color = "lightgrey", symbol = "circle", size = 8, line = dict(width = 4, color = "lightgrey")),
         line = dict(color = "lightgrey", dash = "solid"),
         row = 1, col = 1)
-    
+
+for condition in ["L","LO","LR","O","OL","OR","R","RL","RO",]:
+    y, std = average_measurements(results[f"{condition}"])
     # grey lines
     shorePlot.add_scatter(
         x = x, 
@@ -126,7 +131,8 @@ for condition in ["L","LO","LR","O","OL","OR","R","RL","RO","LRO","LOR","RLO","R
         marker = dict(color = "lightgrey", symbol = "circle", size = 8, line = dict(width = 4, color = "lightgrey")),
         line = dict(color = "lightgrey", dash = "solid"),
         row = 1, col = 2)
-    
+
+
     
 for condition in ["L","LO","LR","O","OL","OR","R","RL","RO",]:
     
@@ -201,13 +207,14 @@ for condition in ["LRO","LOR","RLO","ROL","OLR","ORL"]:
         line = dict(color = color, dash = dash, width = 0),
         row = 1, col = 2)
     
-    shorePlot.add_annotation(text = f"{condition}", x = x[0], y = y[0], showarrow = False, xanchor = "left", xshift = -8*4.5, font = dict(color = color, ), row = 1, col = 2)
+    shorePlot.add_annotation(text = f"{condition}", x = x[0]-0.03, y = y[0], showarrow = False, xanchor = "left", xshift = -8*4.5, font = dict(color = color, ), row = 1, col = 2)
 
 
 
 shorePlot.update_layout(#template = codechembook.plotlyTemplates.chemplate.JACS, 
                         template = "simple_white",
-                        width = 3.3*300, height = 2.5*300)
+                        width = 3.3*300, height = 2.5*300,
+                        font = dict(size = 15))
 shorePlot.show("png")
             
             
