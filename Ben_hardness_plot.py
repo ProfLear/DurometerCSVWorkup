@@ -56,7 +56,7 @@ def get_plot_formatting(condition):
     error = f"rgba(29, 87, 0, {alpha})"
     
     for i, letter in enumerate(condition):
-        
+
         if letter == "L":
             if i == 0:
                 color = f"rgba(211, 96, 39, 1)"

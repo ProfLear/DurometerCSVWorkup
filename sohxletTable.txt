@@ -1,0 +1,6 @@
+
+\begin{table}
+\begin{tabular}{lllll}
+\caption{Table of cross link densities (mmol/cm$^3$) obtained by solvent swelling experiments. }
+    \label{tab:ShoreValues}
+condition & floor & wall & rim & bulk \\ \hline

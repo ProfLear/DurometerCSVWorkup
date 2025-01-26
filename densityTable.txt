@@ -1,0 +1,12 @@
+
+\begin{table}
+\begin{tabular}{ccccc}
+\caption{Table of mass densities (g/cm$^3$) obtained pycnometry measurements. }
+    \label{tab:ShoreValues}
+condition & floor & wall & rim & bulk \\ \hline
+LRO & 1.1037 $\pm$ 0.0033  & 1.0911 $\pm$ 0.0043  & 1.0853 $\pm$ 0.0017  & 1.0807 $\pm$ 0.0064 \\
+RLO & 1.0722 $\pm$ 0.0015  & 1.0836 $\pm$ 0.0043  & 1.0721 $\pm$ 0.0035  & 1.0801 $\pm$ 0.0016 \\
+\hline
+\end{tabular}
+\end{table}
+

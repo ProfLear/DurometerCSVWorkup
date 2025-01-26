@@ -116,7 +116,7 @@ def _():
     RLO_color = f"rgba(162, 55, 104, 1)"
     RLO_fill_color = f"rgba(162, 55, 104, 0.2)"
 
-    tick_labels = ["bowl", "inner-lip", "lip", "bulk"]
+    tick_labels = ["floor", "wall", "rim", "bulk"]
     return LRO_color, LRO_fill_color, RLO_color, RLO_fill_color, tick_labels
 
 
@@ -172,12 +172,12 @@ def _(
                                 showarrow = False)
 
 
-    density_plot.update_xaxes(title = "position", 
+    density_plot.update_xaxes(title = "sampling position", 
                               tickvals = [2, 3, 4, 5], 
                               ticktext = tick_labels)
     density_plot.update_yaxes(title = "density /g/mL",
                               nticks = 4)
-    density_plot.update_layout(template = "simple_white", width = 3.3*300, height = 2*300)
+    density_plot.update_layout(template = "simple_white", width = 3.3*300, height = 2*300, font = dict(size = 15))
     density_plot.show("png")
     return (density_plot,)
 
@@ -302,13 +302,13 @@ def _(
                               nticks = 4,
                            row = 2, col = 1)
 
-    sohxlet_plot.update_xaxes(title = "position", 
+    sohxlet_plot.update_xaxes(title = "sampling position", 
                               tickvals = [2, 3, 4, 5], 
                               ticktext = tick_labels)
 
 
 
-    sohxlet_plot.update_layout(template = "simple_white", width = 3.3*300, height = 3*300)
+    sohxlet_plot.update_layout(template = "simple_white", width = 3.3*300, height = 3*300, font = dict(size = 15))
     sohxlet_plot.show("png")
     return (sohxlet_plot,)
 
@@ -448,7 +448,7 @@ def _(
     density_v_hardness_results = orthogonal_fit(
         {"x data" : LRO_density, "y data" : LRO_hardness, "x data error" : LRO_density_error, "y data error" : LRO_hardness_error},
         {"x data" : RLO_density, "y data" : RLO_hardness, "x data error" : RLO_density_error, "y data error" : RLO_hardness_error},
-        "density",
+        "density / g/mL",
         "hardness"
         )
 
@@ -462,15 +462,15 @@ def _(
     gel_v_hardness_results = orthogonal_fit(
         {"x data" : LRO_gel, "y data" : LRO_hardness, "x data error" : LRO_gel_error, "y data error" : LRO_hardness_error},
         {"x data" : RLO_gel, "y data" : RLO_hardness, "x data error" : RLO_gel_error, "y data error" : RLO_hardness_error},
-        "gel fraction",
+        "gel fraction w/w",
         "hardness"
         )
 
     crosslink_v_density_results = orthogonal_fit(
         {"x data" : LRO_xlink, "y data" : LRO_density, "x data error" : LRO_xlink_error, "y data error" : LRO_density_error},
         {"x data" : RLO_xlink, "y data" : RLO_density, "x data error" : RLO_xlink_error, "y data error" : RLO_density_error},
-        "cross link density",
-        "density"
+        "cross link density / mmol/cm<sup>3</sup>",
+        "density / g/mL"
         )
     return (
         crosslink_v_density_results,
@@ -485,14 +485,11 @@ def _(
 def _(
     LRO_color,
     RLO_color,
-    crosslink_v_density_results,
     crosslink_v_hardness_results,
-    density_v_hardness_results,
-    gel_v_hardness_results,
     make_subplots,
     np,
 ):
-    for result in [density_v_hardness_results, crosslink_v_hardness_results, gel_v_hardness_results, crosslink_v_density_results]:
+    for result in [crosslink_v_hardness_results]:#,density_v_hardness_results, crosslink_v_hardness_results, gel_v_hardness_results, crosslink_v_density_results]:
         fitplot = make_subplots()
         fitplot.add_scatter(x = result["LRO result"]["x data"], 
                             y = result["LRO result"]["y data"], 
@@ -552,22 +549,23 @@ def _(
                             showlegend = False)
 
         # now annotate
+        ann_x = 4
         fitplot.add_annotation(text = f"slope = {int(result["LRO result"]["slope"])} +- {int(result["LRO result"]["slope error"])}<br>R<sup>2</sup>={result["LRO result"]["R^2"]:.3f}", 
-                            x = simx[-1] + abs(simx[-1] - simx[0])*0.05, 
+                            x = ann_x, #simx[-1] + abs(simx[-1] - simx[0])*0.05, 
                             y = LRO_y[-1], 
                                xanchor = "left",
                                 showarrow = False, 
                                 font = dict(color = LRO_color)
                             )
         fitplot.add_annotation(text = f"slope = {int(result["RLO result"]["slope"])} +- {int(result["RLO result"]["slope error"])}<br>R<sup>2</sup>={result["RLO result"]["R^2"]:.3f}", 
-                               x = simx[-1] + abs(simx[-1] - simx[0])*0.05, 
+                               x = ann_x, #simx[-1] + abs(simx[-1] - simx[0])*0.05, 
                                y = RLO_y[-1], 
                                xanchor = "left",
                                showarrow = False, 
                                font = dict(color = RLO_color)
                               )
         fitplot.add_annotation(text = f"slope = {int(result["all result"]["slope"])} +- {int(result["all result"]["slope error"])}<br>R<sup>2</sup>={result["all result"]["R^2"]:.3f}", 
-                               x = simx[-1] + abs(simx[-1] - simx[0])*0.05, 
+                               x = ann_x, #simx[-1] + abs(simx[-1] - simx[0])*0.05, 
                                y = all_y[-1], 
                                xanchor = "left",
                                showarrow = False, 
@@ -576,9 +574,10 @@ def _(
 
         fitplot.update_xaxes(title = f"{result["axes"]["x name"]}")
         fitplot.update_yaxes(title = f"{result["axes"]["y name"]}")
-        fitplot.update_layout(width = 3.3*300, height = 2*300, template = "simple_white")
-        fitplot.show("png")
-    return LRO_y, RLO_y, all_y, fitplot, result, simx
+        fitplot.update_layout(width = 3.3*300, height = 2*300, template = "simple_white", font = dict(size = 15))
+        fitplot.show()
+        fitplot.write_image(r"C:/Users/benle/Downloads/correlationPlot.svg")
+    return LRO_y, RLO_y, all_y, ann_x, fitplot, result, simx
 
 
 @app.cell
